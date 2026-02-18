@@ -1,0 +1,141 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "evalkit"
+version = "0.1.0"
+description = "LLM evaluation and comparison framework"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "EvalKit Contributors" }]
+requires-python = ">=3.11"
+keywords = ["llm", "evaluation", "benchmarking", "ai", "nlp"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Testing",
+]
+
+dependencies = [
+    "httpx>=0.27.0",
+    "pydantic>=2.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.0",
+    "tiktoken>=0.7.0",
+    "sqlalchemy>=2.0.0",
+    "aiosqlite>=0.20.0",
+    "matplotlib>=3.8.0",
+    "numpy>=1.26.0",
+    "scikit-learn>=1.4.0",
+    "pyyaml>=6.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.4.0",
+    "httpx>=0.27.0",
+]
+sentence-transformers = [
+    "sentence-transformers>=3.0.0",
+]
+
+[project.scripts]
+evalkit = "evalkit.cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/your-org/evalkit"
+Documentation = "https://evalkit.readthedocs.io"
+Repository = "https://github.com/your-org/evalkit"
+Issues = "https://github.com/your-org/evalkit/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evalkit"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "tests/",
+    "datasets/",
+    "configs/",
+    "README.md",
+    "LICENSE",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = [
+    "--tb=short",
+    "--strict-markers",
+    "-q",
+]
+markers = [
+    "asyncio: mark test as async",
+    "slow: mark test as slow (deselect with '-m not slow')",
+    "integration: mark test as integration test",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "ANN", # flake8-annotations (type hints)
+    "RUF", # ruff-specific rules
+]
+ignore = [
+    "ANN101",  # Missing type annotation for `self`
+    "ANN102",  # Missing type annotation for `cls`
+    "ANN401",  # Dynamically typed expressions (Any) are disallowed
+    "B008",    # Do not perform function calls in default arguments
+    "E501",    # Line too long (handled by formatter)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN", "S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.coverage.run]
+source = ["src/evalkit"]
+branch = true
+omit = [
+    "src/evalkit/cli/main.py",
+    "tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@abstractmethod",
+]
+show_missing = true
