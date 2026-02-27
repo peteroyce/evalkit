@@ -1,0 +1,171 @@
+name: summarization
+description: Summarization evaluation suite testing the ability to condense information accurately, identify main points, and preserve key facts.
+version: "1.0"
+scorers:
+  - contains
+  - similarity
+cases:
+  - id: summ_01
+    prompt: |
+      Summarize the following passage in one sentence:
+      "The Amazon rainforest, often referred to as the 'lungs of the Earth', covers over 5.5 million square kilometers across nine countries in South America. It is home to an estimated 10% of all species on Earth, including 40,000 plant species, 1,300 bird species, and 3,000 types of fish. The forest plays a critical role in regulating the global climate by absorbing carbon dioxide and producing oxygen. Despite its importance, the Amazon faces significant threats from deforestation, primarily driven by agriculture, cattle ranching, and logging."
+    expected: "The Amazon rainforest is a vast, biodiversity-rich ecosystem critical to global climate regulation that faces serious threats from deforestation."
+    tags: [nature, environment, one-sentence]
+    metadata:
+      difficulty: easy
+      category: environmental
+
+  - id: summ_02
+    prompt: |
+      Summarize the key points of the following text in bullet points:
+      "The Industrial Revolution, which began in Britain in the late 18th century, transformed economies from agrarian to industrial. Key developments included the invention of the steam engine by James Watt, mechanized textile production, and the expansion of the railway network. These changes led to unprecedented economic growth but also caused significant social upheaval, including urbanization, child labor, and poor working conditions in factories. The Revolution spread to Europe and North America throughout the 19th century."
+    expected: "Began in Britain in late 18th century; steam engine and mechanization; economic growth; social problems including child labor; spread to Europe and North America."
+    tags: [history, bullets, industrial-revolution]
+    metadata:
+      difficulty: medium
+      category: historical
+
+  - id: summ_03
+    prompt: |
+      In two to three sentences, summarize this news article excerpt:
+      "Scientists at MIT have developed a new battery technology that charges in just two minutes and holds charge for 10 times longer than current lithium-ion batteries. The breakthrough relies on a novel aluminum-graphene composite that dramatically increases ion transfer speed. Researchers say the technology could be commercially available within five years and would have significant implications for electric vehicles and renewable energy storage."
+    expected: "MIT scientists have developed a new aluminum-graphene battery that charges in two minutes and lasts ten times longer than lithium-ion batteries. The technology could be commercially available within five years, with major implications for electric vehicles and energy storage."
+    tags: [technology, science, news]
+    metadata:
+      difficulty: easy
+      category: technology
+
+  - id: summ_04
+    prompt: |
+      Summarize the plot of the following story synopsis in one paragraph:
+      "In a dystopian future, the government controls all information and rewrites history to maintain power. Winston Smith, a low-ranking party member, secretly rebels by writing in a diary and falling in love with Julia. He contacts O'Brien, whom he believes to be a secret revolutionary, but O'Brien is in fact a party loyalist. Winston and Julia are arrested, and Winston is tortured until he genuinely loves Big Brother."
+    expected: "In a dystopian society, Winston Smith rebels against a totalitarian government by keeping a diary and falling in love, but is ultimately betrayed, arrested, and mentally broken into genuinely accepting the regime."
+    tags: [literature, fiction, dystopia]
+    metadata:
+      difficulty: medium
+      category: literature
+
+  - id: summ_05
+    prompt: |
+      Extract and summarize only the financial information from this passage:
+      "TechCorp announced record quarterly results yesterday. The company reported revenues of $4.2 billion, up 23% year-over-year. Net income rose to $890 million from $620 million in the same period last year. The CEO said the company plans to invest $500 million in R&D over the next year. Meanwhile, the company opened 15 new offices and hired 2,000 employees globally. Customer satisfaction scores reached an all-time high of 94%."
+    expected: "Revenue: $4.2 billion (up 23% YoY); net income: $890 million (up from $620 million); planned R&D investment: $500 million."
+    tags: [finance, extraction, business]
+    metadata:
+      difficulty: medium
+      category: financial
+
+  - id: summ_06
+    prompt: |
+      Summarize the following medical abstract in plain language that a non-expert could understand:
+      "This randomized controlled trial investigated the efficacy of a novel mRNA-based therapeutic intervention targeting KRAS mutations in patients with non-small-cell lung carcinoma (NSCLC). Participants (n=240) were randomly assigned to receive either the therapeutic (n=120) or placebo (n=120) administered intravenously biweekly for 12 weeks. Primary endpoints included progression-free survival (PFS) and objective response rate (ORR). Results demonstrated a statistically significant improvement in median PFS (8.4 vs 4.1 months, p<0.001) and ORR (42% vs 18%, p<0.001) in the treatment group versus placebo."
+    expected: "A clinical trial tested a new mRNA treatment for a type of lung cancer. Patients who received the treatment lived nearly twice as long without their cancer getting worse (8.4 vs 4.1 months), and more than twice as many patients responded to the treatment (42% vs 18%)."
+    tags: [medical, plain-language, clinical-trial]
+    metadata:
+      difficulty: hard
+      category: medical
+
+  - id: summ_07
+    prompt: |
+      Provide a one-sentence TL;DR (Too Long; Didn't Read) for this email:
+      "Hi team, I wanted to share the outcome of yesterday's quarterly business review meeting. We discussed our progress toward the annual targets and identified several areas requiring immediate attention. Marketing confirmed that the Q3 campaign launched on schedule and early metrics look promising, with click-through rates 15% above benchmark. Sales reported a challenging quarter due to macroeconomic headwinds but remains optimistic about Q4 given the strong pipeline. Engineering completed the migration to the new cloud infrastructure ahead of schedule, which should reduce operational costs by approximately 12% annually. HR reminded everyone that performance reviews are due by October 15th. Please review the attached slide deck for full details."
+    expected: "The quarterly review covered promising marketing metrics, challenging but optimistic sales, an ahead-of-schedule cloud migration saving 12% in costs, and a reminder that performance reviews are due October 15th."
+    tags: [business, email, tldr]
+    metadata:
+      difficulty: medium
+      category: business
+
+  - id: summ_08
+    prompt: |
+      Summarize the following legal clause in simple terms:
+      "Notwithstanding any other provision of this Agreement, neither party shall be liable to the other for any indirect, incidental, consequential, special, or exemplary damages arising out of or related to this Agreement, including but not limited to loss of revenue, loss of profits, loss of business, or loss of data, whether or not the possibility of such damages has been advised, and regardless of the theory of liability."
+    expected: "Neither party can be held responsible for indirect or consequential losses (like lost profits or data) that result from this agreement, even if they were warned such losses could occur."
+    tags: [legal, plain-language, contracts]
+    metadata:
+      difficulty: hard
+      category: legal
+
+  - id: summ_09
+    prompt: |
+      In three bullet points, summarize the main causes of World War I as described:
+      "World War I was caused by a complex interplay of factors. Nationalism was intensifying across Europe, with various ethnic groups seeking independence. European powers had formed two major alliance blocs — the Triple Entente and the Triple Alliance — creating a situation where a conflict between two nations could draw in all major powers. An arms race, particularly between Britain and Germany, had created vast military arsenals and a culture of militarism. The immediate trigger was the assassination of Archduke Franz Ferdinand of Austria-Hungary in Sarajevo in June 1914, which set off the alliance system like a chain reaction."
+    expected: "Rising nationalism among European ethnic groups; interlocking alliance systems between major powers; arms race and militarism culture. The assassination of Archduke Franz Ferdinand triggered the chain reaction."
+    tags: [history, bullets, wwi]
+    metadata:
+      difficulty: medium
+      category: historical
+
+  - id: summ_10
+    prompt: |
+      Summarize the key arguments on both sides of this debate passage:
+      "Proponents of universal basic income (UBI) argue that automation is rapidly eliminating jobs and that UBI would provide a safety net, reduce poverty, and give workers the freedom to pursue education or entrepreneurship. They point to pilot programs in Finland and Kenya showing improved mental health and economic outcomes. Critics counter that UBI is prohibitively expensive and would require massive tax increases or spending cuts. They also argue it could reduce the incentive to work and contribute to inflation by increasing consumer spending without a corresponding increase in production."
+    expected: "For UBI: safety net against automation, poverty reduction, pilot program successes, freedom to pursue education. Against UBI: high cost requiring tax increases, potential work disincentive, possible inflation risk."
+    tags: [policy, debate, ubi]
+    metadata:
+      difficulty: medium
+      category: policy_analysis
+
+  - id: summ_11
+    prompt: |
+      Write an executive summary (3-4 sentences) for the following report section:
+      "Our analysis of 500 customer support tickets over the past quarter reveals that 65% of issues stem from three root causes: unclear onboarding documentation (28%), billing discrepancies (22%), and integration failures with third-party tools (15%). Resolution times average 48 hours, compared to the industry benchmark of 24 hours. Customer satisfaction (CSAT) scores after resolution average 3.2 out of 5. Implementing a self-service knowledge base for the top 20 most common issues could resolve approximately 40% of tickets without agent intervention, potentially reducing resolution time and improving CSAT significantly."
+    expected: "Analysis of 500 support tickets shows 65% of issues come from three root causes: onboarding documentation, billing, and integration. Resolution time (48 hours) is double the industry benchmark, with CSAT at 3.2/5. A self-service knowledge base targeting the top 20 issues could resolve 40% of tickets without agent involvement, improving both speed and satisfaction."
+    tags: [business, executive-summary, customer-support]
+    metadata:
+      difficulty: hard
+      category: business
+
+  - id: summ_12
+    prompt: |
+      Summarize the following poem's main theme in one sentence:
+      "Do not go gentle into that good night,
+      Old age should burn and rave at close of day;
+      Rage, rage against the dying of the light.
+      Though wise men at their end know dark is right,
+      Because their words had forked no lightning they
+      Do not go gentle into that good night."
+    expected: "The poem urges resistance against death and a fierce refusal to accept one's end passively."
+    tags: [literature, poetry, theme]
+    metadata:
+      difficulty: medium
+      category: literature
+
+  - id: summ_13
+    prompt: |
+      Summarize the following product description for a 10-year-old:
+      "The Quantum X Pro wireless headphones feature active noise cancellation technology utilizing dual microphones and advanced DSP algorithms to attenuate ambient frequencies by up to 35dB. The 40mm dynamic drivers deliver a frequency response of 20Hz-20kHz with an impedance of 32 ohms. With a 30-hour battery life and Bluetooth 5.2 connectivity supporting SBC, AAC, and aptX codecs, these headphones provide superior audio fidelity and seamless device pairing."
+    expected: "These wireless headphones block out background noise so you can focus on your music. They have great sound quality and can play for 30 hours without needing to be charged. They connect easily to your device using Bluetooth."
+    tags: [technology, plain-language, child-friendly]
+    metadata:
+      difficulty: medium
+      category: technology
+
+  - id: summ_14
+    prompt: |
+      Summarize the scientific consensus on climate change based on this passage, in two sentences:
+      "The Intergovernmental Panel on Climate Change (IPCC) Sixth Assessment Report confirms with unequivocal certainty that human influence has warmed the atmosphere, ocean, and land. Global surface temperature has increased faster since 1970 than in any other 50-year period over at least the last 2,000 years. Scientists project that without significant reductions in greenhouse gas emissions, average global temperatures could rise by 2.7 to 4.4 degrees Celsius above pre-industrial levels by 2100, leading to more frequent extreme weather events, sea level rise, and disruptions to ecosystems and human societies."
+    expected: "Human activity is unequivocally causing global warming, with temperatures rising faster than any time in the past 2,000 years. Without major emissions reductions, temperatures could rise 2.7-4.4°C by 2100, causing severe disruptions worldwide."
+    tags: [science, climate, environment]
+    metadata:
+      difficulty: medium
+      category: environmental
+
+  - id: summ_15
+    prompt: |
+      Create a brief abstract (2-3 sentences) for this research description:
+      "This study examined the relationship between sleep duration and academic performance in 1,200 university students over one semester. Students who slept 7-9 hours per night achieved an average GPA of 3.4, compared to 2.8 for those sleeping less than 6 hours. Survey data revealed that shorter sleepers also reported higher stress levels, lower motivation, and more frequent use of caffeine. Multivariate analysis controlling for study time, socioeconomic status, and prior academic performance confirmed that sleep duration independently predicted GPA."
+    expected: "This study of 1,200 university students found that sleeping 7-9 hours was associated with a significantly higher GPA (3.4 vs 2.8) compared to sleeping under 6 hours. The relationship held after controlling for study time and other factors, confirming sleep duration as an independent predictor of academic performance."
+    tags: [science, academic, research-abstract]
+    metadata:
+      difficulty: hard
+      category: scientific
+
+  - id: summ_16
+    prompt: |
+      Summarize what action the user should take based on this notification:
+      "IMPORTANT: Your subscription to CloudStore Pro is set to expire on November 30, 2024. To continue accessing your files and premium features without interruption, please renew your subscription before the expiration date. If you do not renew, your account will be downgraded to the free tier, and files exceeding the 5GB free storage limit may be deleted after a 30-day grace period. To renew, visit Settings > Billing > Renew Subscription, or click the button below."
+    expected: "Renew your CloudStore Pro subscription before November 30, 2024 by going to Settings > Billing > Renew Subscription to avoid losing access to premium features and potentially having files deleted."
+    tags: [action-oriented, notification, SaaS]
+    metadata:
+      difficulty: easy
+      category: action_extraction
