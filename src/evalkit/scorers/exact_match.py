@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def _normalize(text: str) -> str:
     """Normalize text: lowercase, collapse whitespace, strip punctuation edges."""
-    text = text.lower().strip()
+    text = text.lower().strip().lower()
     text = re.sub(r"\s+", " ", text)
     return text
 
