@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -100,7 +101,7 @@ class JSONFileBackend(StorageBackend):
     def _run_path(self, run_id: str) -> Path:
         return self._runs_dir / f"{run_id}.json"
 
-    async def save_run(
+    def _save_run_sync(
         self,
         run_id: str,
         suite_name: str,
@@ -123,7 +124,21 @@ class JSONFileBackend(StorageBackend):
         path.write_text(json.dumps(record, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.debug("JSONFileBackend: saved run '%s' to '%s'", run_id, path)
 
-    async def get_run(self, run_id: str) -> dict[str, Any] | None:
+    async def save_run(
+        self,
+        run_id: str,
+        suite_name: str,
+        model: str,
+        timestamp: str,
+        results: list[EvalResult],
+        summary: dict[str, Any] | None = None,
+        config: dict[str, Any] | None = None,
+    ) -> None:
+        await asyncio.to_thread(
+            self._save_run_sync, run_id, suite_name, model, timestamp, results, summary, config
+        )
+
+    def _get_run_sync(self, run_id: str) -> dict[str, Any] | None:
         path = self._run_path(run_id)
         if not path.exists():
             return None
@@ -131,7 +146,10 @@ class JSONFileBackend(StorageBackend):
         logger.debug("JSONFileBackend: loaded run '%s'", run_id)
         return data
 
-    async def list_runs(
+    async def get_run(self, run_id: str) -> dict[str, Any] | None:
+        return await asyncio.to_thread(self._get_run_sync, run_id)
+
+    def _list_runs_sync(
         self,
         suite_name: str | None = None,
         model: str | None = None,
@@ -160,7 +178,16 @@ class JSONFileBackend(StorageBackend):
             })
         return runs[offset: offset + limit]
 
-    async def save_judgment(self, judgment: Judgment) -> None:
+    async def list_runs(
+        self,
+        suite_name: str | None = None,
+        model: str | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        return await asyncio.to_thread(self._list_runs_sync, suite_name, model, limit, offset)
+
+    def _save_judgment_sync(self, judgment: Judgment) -> None:
         record = {
             "id": str(uuid.uuid4()),
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -170,7 +197,10 @@ class JSONFileBackend(StorageBackend):
         path.write_text(json.dumps(record, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.debug("JSONFileBackend: saved judgment '%s'", record["id"])
 
-    async def get_judgments(
+    async def save_judgment(self, judgment: Judgment) -> None:
+        await asyncio.to_thread(self._save_judgment_sync, judgment)
+
+    def _get_judgments_sync(
         self,
         eval_id: str | None = None,
         judge: str | None = None,
@@ -189,13 +219,23 @@ class JSONFileBackend(StorageBackend):
             judgments.append(Judgment.from_dict(data))
         return judgments
 
-    async def delete_run(self, run_id: str) -> bool:
+    async def get_judgments(
+        self,
+        eval_id: str | None = None,
+        judge: str | None = None,
+    ) -> list[Judgment]:
+        return await asyncio.to_thread(self._get_judgments_sync, eval_id, judge)
+
+    def _delete_run_sync(self, run_id: str) -> bool:
         path = self._run_path(run_id)
         if not path.exists():
             return False
         path.unlink()
         logger.debug("JSONFileBackend: deleted run '%s'", run_id)
         return True
+
+    async def delete_run(self, run_id: str) -> bool:
+        return await asyncio.to_thread(self._delete_run_sync, run_id)
 
 
 # ---------------------------------------------------------------------------
