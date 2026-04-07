@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import logging
+import os
 import uuid
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -30,6 +32,32 @@ from evalkit.core.types import Judgment
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+def _validate_suite_path(user_path: str) -> Path:
+    """Validate a user-supplied suite file path to prevent directory traversal.
+
+    Resolves the path and, when the ``EVALKIT_DATASETS_DIR`` environment
+    variable is set, ensures the resolved path stays within that directory.
+    """
+    resolved = Path(user_path).resolve()
+
+    base_dir = os.environ.get("EVALKIT_DATASETS_DIR")
+    if base_dir:
+        allowed = Path(base_dir).resolve()
+        if not str(resolved).startswith(str(allowed) + os.sep) and resolved != allowed:
+            raise ValueError(
+                f"Suite path '{user_path}' is outside the allowed datasets directory"
+            )
+
+    # Even without a configured base dir, reject paths containing traversal
+    # components in the raw input to block naive exploitation attempts.
+    if ".." in Path(user_path).parts:
+        raise ValueError(
+            f"Suite path '{user_path}' contains disallowed '..' traversal"
+        )
+
+    return resolved
 
 
 def _get_storage(request: Request) -> Any:
@@ -79,8 +107,12 @@ async def evaluate(body: EvaluateRequest, request: Request) -> EvaluateResponse:
             raise HTTPException(status_code=404, detail=str(exc))
     elif body.suite_path:
         try:
+            validated_path = _validate_suite_path(body.suite_path)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+        try:
             loader = DatasetLoader(tag_filter=body.tag_filter or None)
-            suite = loader.load(body.suite_path)
+            suite = loader.load(str(validated_path))
         except FileNotFoundError as exc:
             raise HTTPException(status_code=404, detail=str(exc))
     else:
