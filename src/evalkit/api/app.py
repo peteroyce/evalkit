@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
 
@@ -10,6 +11,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from evalkit import __version__
+
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 from evalkit.api.routes import router
 
 logger = logging.getLogger(__name__)
@@ -54,7 +57,7 @@ def create_app(
                  If None, endpoints that require storage will return 503.
         runner_config: Optional RunnerConfig for shared runner settings.
         title: API title shown in the OpenAPI docs.
-        allow_origins: CORS allowed origins. Defaults to ["*"] (open).
+        allow_origins: CORS allowed origins. Defaults to ALLOWED_ORIGINS env var.
         debug: Enable FastAPI debug mode.
 
     Returns:
@@ -80,7 +83,7 @@ def create_app(
     app.state.runner_config = runner_config
 
     # CORS middleware
-    origins = allow_origins or ["*"]
+    origins = allow_origins or ALLOWED_ORIGINS
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
