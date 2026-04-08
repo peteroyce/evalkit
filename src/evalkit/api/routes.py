@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import uuid
 from pathlib import Path
 from typing import Any
@@ -66,6 +67,17 @@ def _get_storage(request: Request) -> Any:
 
 def _get_runner_config(request: Request) -> Any:
     return request.app.state.runner_config
+
+
+def _validate_run_id_param(run_id: str) -> None:
+    """Validate a run_id path parameter. Raises HTTPException on failure."""
+    if len(run_id) > 128:
+        raise HTTPException(status_code=400, detail="run_id must be 128 characters or fewer")
+    if not re.match(r"^[a-zA-Z0-9_-]+$", run_id):
+        raise HTTPException(
+            status_code=400,
+            detail="run_id must contain only alphanumeric characters, hyphens, and underscores",
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -221,6 +233,7 @@ async def list_runs(
 @router.get("/runs/{run_id}", response_model=RunDetailResponse, tags=["runs"])
 async def get_run(run_id: str, request: Request) -> RunDetailResponse:
     """Get detailed results for a specific eval run."""
+    _validate_run_id_param(run_id)
     storage = _get_storage(request)
     if storage is None:
         raise HTTPException(status_code=503, detail="No storage backend configured.")
@@ -274,6 +287,7 @@ async def get_run(run_id: str, request: Request) -> RunDetailResponse:
 @router.delete("/runs/{run_id}", tags=["runs"])
 async def delete_run(run_id: str, request: Request) -> dict[str, str]:
     """Delete an eval run."""
+    _validate_run_id_param(run_id)
     storage = _get_storage(request)
     if storage is None:
         raise HTTPException(status_code=503, detail="No storage backend configured.")

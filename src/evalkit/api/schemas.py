@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+import re
+
+from pydantic import BaseModel, Field, field_validator
 
 
 # ---------------------------------------------------------------------------
@@ -20,15 +22,15 @@ class ProviderRequest(BaseModel):
     model: str = "mock-model"
     api_key: str | None = None
     base_url: str | None = None
-    temperature: float = 0.0
-    max_tokens: int = 2048
+    temperature: float = Field(default=0.0, ge=0.0, le=2.0)
+    max_tokens: int = Field(default=2048, ge=1)
 
 
 class ScorerRequest(BaseModel):
     """Inline scorer specification for API requests."""
 
     type: str
-    weight: float = 1.0
+    weight: float = Field(default=1.0, ge=0.0, le=1.0)
     params: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -54,6 +56,17 @@ class EvaluateRequest(BaseModel):
     concurrency: int = Field(default=5, gt=0)
     tag_filter: list[str] = Field(default_factory=list)
     run_id: str | None = None
+
+    @field_validator("run_id")
+    @classmethod
+    def validate_run_id(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        if len(v) > 128:
+            raise ValueError("run_id must be 128 characters or fewer")
+        if not re.match(r"^[a-zA-Z0-9_-]+$", v):
+            raise ValueError("run_id must contain only alphanumeric characters, hyphens, and underscores")
+        return v
 
 
 class JudgmentRequest(BaseModel):
